@@ -1,0 +1,9 @@
+dn: ou=people,dc=wims2,dc=plantsense,dc=ai
+objectClass: organizationalUnit
+objectClass: top
+ou: people
+
+dn: ou=groups,dc=wims2,dc=plantsense,dc=ai
+objectClass: organizationalUnit
+objectClass: top
+ou: groups

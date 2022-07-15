@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "grafana.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "grafana.fullname" . }}
+  replicas: {{ .Values.replicaCount }} # tells StatefulSet to run 2 pods matching the template
+  serviceName: {{ template "grafana.fullname" . }}-headless
+  template:
+    metadata:
+      labels:
+        app: {{ include "grafana.fullname" . }}
+    spec:
+      containers:
+      - name: grafana
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 3000 # container port
+        env:
+          - name: DOMAIN
+            value: "{{ .Values.env.domain }}"
+          - name: REACT_APP_API
+            value: "{{ .Values.env.reactApi }}"
+          - name: SOLUTION
+            value: "{{ .Values.env.solution }}"
+          - name: DB_TYPE
+            value: "{{ .Values.env.dbType }}"
+          - name: DB_HOST
+            value: "{{ .Values.env.dbHost }}"
+          - name: DB_NAME
+            value: "{{ .Values.env.dbName }}"
+          - name: DB_USER
+            value: "{{ .Values.env.dbUser}}"
+          - name: DB_PASSWD
+            value: "{{ .Values.env.dbPasswd }}"
+        volumeMounts:
+          - name: grafana-plugins
+            mountPath: /var/lib/grafana/plugins
+      volumes:
+        - name: grafana-plugins
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistent.existingClaim | default (printf "%s-grafana-plugins" (include "grafana.fullname" . | trunc 58 )) }}

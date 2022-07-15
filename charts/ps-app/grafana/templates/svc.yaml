@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "grafana.fullname" . }}-headless
+  namespace: default
+spec:
+  clusterIP: None
+  # type: ClusterIP # network type
+  selector:
+    app: {{ include "grafana.fullname" . }}
+  ports:
+  - port: 3000

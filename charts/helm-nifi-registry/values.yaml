@@ -1,0 +1,110 @@
+# Default values for helm-nifi-registry.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: "apache/nifi-registry"
+  tag: "0.4.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+clusterDomain: cluster.local
+
+service:
+  type: NodePort
+  port: 18080
+  targetPort: 18080
+
+ingress:
+  enabled: false
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths: []
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+  # annotations:
+  #   kubernetes.io/ingress.class: "ingress-class-here-unless-is-nginx"
+  #
+  #   kubernetes.io/tls-acme:             "true"
+  #   certmanager.k8s.io/cluster-issuer:  "tls-issuer-name-here"
+  #   ingress.kubernetes.io/ssl-redirect: "true"
+  #
+  #   nginx.ingress.kubernetes.io/proxy-body-size: 256m
+
+nifi_access_internal: true
+
+nifiRegistry:
+  WebHttpHost: "0.0.0.0"
+
+persistence:
+  enabled: true
+
+  nifiSingleDisk:
+    enabled: true
+    storageSize: 4Gi
+
+    # # choose one and only one of the following: dynamic or existingPV (existingPV wins if both are defined)
+
+    dynamic:
+      accessModes: ReadWriteMany
+      storageClass: glusterfs
+
+    # existingPV:
+    #   accessModes: ReadWriteMany
+    #   storageClassName: slow
+
+# # Enable GIT requests NIFI Registry docker image with GIT pre installed
+flow_persistence:
+  # https://dzone.com/articles/quick-tip-using-git-with-nifi-registry-in-docker
+  mode: "postgres"
+  git:
+    # repo_proto: "https://"
+    # repo_uri:   "gitlab.com/git-user/repo-name"
+    remote: origin
+    # Use a Secret resource or Usr & Pwd
+
+    # secretName:
+    #  user:
+    #  pass:
+
+    # user:
+    # pass:
+  postgres:
+    downloadDriverURL: https://jdbc.postgresql.org/download/
+    driverFileName: postgresql-42.2.6.jar
+    url: jdbc:postgresql://pgbouncer-pgbouncer:5432/nifi_db?nifi
+    driverClass: org.postgresql.Driver
+    driverDirectory: /opt/nifi-registry/libs/
+    userName: postgres
+    password: postgres

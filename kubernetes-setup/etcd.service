@@ -1,0 +1,18 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos
+
+
+[Service]
+ExecStart=/usr/local/bin/etcd \
+  --name 192.168.56.12 \
+  --initial-advertise-peer-urls https://192.168.56.12:2380 \
+  --listen-peer-urls https://192.168.56.12:2380 \
+  --listen-client-urls https://192.168.56.12:2379,http://127.0.0.1:2379 \
+  --advertise-client-urls https://192.168.56.12:2379 \
+  --initial-cluster-token etcd-cluster-0 \
+  --initial-cluster 192.168.56.12=https://192.168.56.12:2380,192.168.56.13=https://192.168.56.13:2380,192.168.56.14=https://192.168.56.14:2380 \
+  --initial-cluster-state new \
+  --data-dir=/var/lib/etcd
+Restart=on-failure
+RestartSec=5

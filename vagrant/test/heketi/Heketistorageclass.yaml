@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+ name: glusterfstest
+provisioner: kubernetes.io/glusterfs
+allowVolumeExpansion: true
+parameters:
+ resturl: "http://65.21.150.194:8080"
+ clusterid: "c5337a2742323ce7c9f2c087d5c474c9"
+ restuser: "admin"
+ secretNamespace: "default"
+ secretName: "heketi-secret"
+ volumetype: "none"
+ volumeoptions: "ctime off"

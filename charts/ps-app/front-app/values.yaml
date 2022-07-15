@@ -1,0 +1,27 @@
+replicaCount: 1
+
+image:
+  repository: plantsense123/frontend-app
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "tserver"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  port: 4000
+  apiEndPoint: http://65.21.184.225:30304/api
+  cubejsEndPoint: http://65.21.184.225:30304
+  flowableEndPoint: http://65.21.184.225:30304/flowable-task
+  insightEndPoint: http://65.21.184.225:30304/insight
+  ectdUrl: http://65.21.184.225:30304/etcd-members
+
+  sslCertFile: certificate.crt    
+  sslKeyFile: private.key   
+
+    
+  publicUrl: /portal
+
+  wdsPort: 4000

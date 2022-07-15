@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "ps-app.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "ps-app.fullname" . }}
+  replicas: {{ .Values.replicaCount }} # tells StatefulSet to run 2 pods matching the template
+  serviceName: {{ template "ps-app.fullname" . }}-service
+  template:
+    metadata:
+      labels:
+        app: {{ include "ps-app.fullname" . }}
+        networking/allow-internet-egress: "true"
+    spec:
+      containers:
+      - name: proxy
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 9999 # container port
+        env:
+          - name: PORT
+            value: "{{ .Values.env.port }}"
+          - name: KEYCLOAK_REALM
+            value: "{{ .Values.env.keyclockRealm }}"
+          - name: KEYCLOAK_AUTH_SERVER_URL
+            value: "{{ .Values.env.keyclockServer }}"
+          - name: KEYCLOAK_SSL_REQUIRED
+            value: "{{ .Values.env.keyclockSslReq }}"
+          - name: KEYCLOAK_RESOURCE
+            value: "{{ .Values.env.keyclockResource }}"
+          - name: KEYCLOAK_CREDENTIALS_SECRET
+            value: "{{ .Values.env.keyclockSecret }}"
+          - name: API_PATH
+            value: "{{ .Values.env.apiPath }}"
+          - name: INSIGHT_PATH
+            value: "{{ .Values.env.insightPath }}"
+          - name: BIVIZ_PATH
+            value: "{{ .Values.env.bivizPath }}"
+          - name: FLINK_PATH
+            value: "{{ .Values.env.flinkPath }}"
+          - name: KAFKA_CONNECTOR_PATH
+            value: "{{ .Values.env.kafkaConnectPath }}"
+          - name: KAFKA_SCHEMA_PATH
+            value: "{{ .Values.env.kafkaSchemaPath }}"
+          - name: KAFKA_TOPIC_PATH
+            value: "{{ .Values.env.kafkaTopicPath }}"
+          - name: NIFI_PATH
+            value: "{{ .Values.env.nifiPath }}"
+          - name: FLOWABLE_TASK
+            value: "{{ .Values.env.flowablePath }}"
+          - name: ETCD_URL
+            value: "{{ .Values.env.etcdPath }}"
+          - name: PORTAL_PRODUCTION
+            value: "{{ .Values.env.portalProduction }}"
+          - name: PORTAL_DIRECTORY
+            value: "{{ .Values.env.portalProductionPath }}"
+          - name: PORTAL_PATH
+            value: "{{ .Values.env.portalPath }}"
+          - name: SESSION_SECRET
+            value: "{{ .Values.env.sessionSecret }}"
+          - name: SSL
+            value: "{{ .Values.env.ssl }}"
+          - name: HOST_URL
+            value: "{{ .Values.env.hostUrl }}"
+          - name: SOLUTION
+            value: "{{ .Values.env.solution }}"
+          - name: PROD_API_END_POINT
+            value: "{{ .Values.frontendenv.prodUrl }}"
+          - name: PROD_CUBE_END_POINT
+            value: "{{ .Values.frontendenv.prodUrl }}"
+          - name: PROD_FLOWABLE_API_URL
+            value: "{{ .Values.frontendenv.prodUrl }}"
+          - name: PROD_INSIGHT_END_POINT
+            value: "{{ .Values.frontendenv.prodUrl }}"
+          - name: PROD_ETCD_URL
+            value: "{{ .Values.frontendenv.prodUrl }}"

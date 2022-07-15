@@ -1,0 +1,29 @@
+replicaCount: 1
+
+image:
+  repository: plantsense123/grafana
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "8.1.2"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+persistent:
+    enabled: true
+    # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1
+    storageClass: glusterfs
+    size: 1Gi
+    accessMode: ReadWriteMany
+    # mountPath: "/flink_fs"
+
+env:
+  domain: https://wims2.plantsense.ai
+  reactApi: $DOMAIN/api
+  solution: wims
+  dbType: postgres
+  dbHost: 138.201.248.228:31321
+  dbName: insight_db
+  dbUser: insightuser
+  dbPasswd: insightUser

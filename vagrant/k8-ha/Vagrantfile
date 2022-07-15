@@ -1,0 +1,51 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+ENV['VAGRANT_NO_PARALLEL'] = 'yes'
+ENV['VAGRANT_EXPERIMENTAL']="disks"
+# disk = './secondDisk.vdi'
+Vagrant.configure(2) do |config|
+
+  config.vm.provision "shell", path: "bootstrap.sh"
+  Nodes = 2
+
+  #  Master Server
+  (1..Nodes).each do |i|
+    config.vm.define "kube-master-#{i}" do |node|
+      # node.vm.boot_timeout = 60000
+      node.vm.box = "ubuntu/focal64"
+      node.vm.hostname = "kube-master-#{i}.com"
+      node.vm.provider "virtualbox" do |v|
+        v.name = "kube-master-#{i}"
+        v.memory = 1024
+        v.cpus = 1
+      end
+    end
+  end
+
+  #  Slave Server
+  (1..Nodes).each do |i|
+    config.vm.define "kube-node-#{i}" do |node|
+      # node.vm.boot_timeout = 60000
+      node.vm.box = "ubuntu/focal64"
+      node.vm.hostname = "kube-node-#{i}.com"
+      node.vm.provider "virtualbox" do |v|
+        v.name = "kube-node-#{i}"
+        v.memory = 1024
+        v.cpus = 1
+      end
+    end
+  end
+
+  # k8-haproxy Node
+  config.vm.define "k8-haproxy" do |node|
+    node.vm.box = "ubuntu/focal64"
+    node.vm.hostname = "k8-haproxy.com"
+    node.vm.provider "virtualbox" do |v|
+      v.name = "k8-haproxy"
+      v.memory = 1024
+      v.cpus = 1
+    end
+  end
+
+end

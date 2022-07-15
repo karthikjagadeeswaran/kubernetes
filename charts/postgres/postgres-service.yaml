@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+spec:
+  type: LoadBalancer
+  clusterIP: 10.96.0.2
+  ports:
+   - port: 5432
+     nodePort: 30417
+  selector:
+    app: postgres

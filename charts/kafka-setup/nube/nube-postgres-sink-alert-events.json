@@ -1,0 +1,37 @@
+{
+  "name":"nube-postgres-sink-alert-events",
+  "config": {
+      "connector.class":"io.confluent.connect.jdbc.JdbcSinkConnector",
+      "tasks.max":"1",
+      "topics":"nube-alerts",
+      "connection.url":"jdbc:postgresql://haproxy.haproxy.default.svc.cluster.local:7779/test?user=postgres&password=postgres",
+      "auto.create":"true",
+      "key.converter":"org.apache.kafka.connect.storage.StringConverter",
+      "key.converter.schema.registry.url":"http://kafka-schema-registry-cp-schema-registry-headless:8081",
+      "value.converter":"io.confluent.connect.avro.AvroConverter",
+      "value.converter.schema.registry.url":"http://kafka-schema-registry-cp-schema-registry-headless:8081",
+      "table.name.format":"alert.alerts",
+
+      "transforms":"CastTime,StartTime,EndTime",
+      "transforms.CastTime.type":"org.apache.kafka.connect.transforms.TimestampConverter$Value",
+      "transforms.CastTime.spec":"timestamp:LONG",
+      "transforms.CastTime.target.type":"Timestamp",
+      "transforms.CastTime.field":"timestamp",
+
+
+      "transforms.StartTime.type":"org.apache.kafka.connect.transforms.TimestampConverter$Value",
+      "transforms.StartTime.spec":"start_time:LONG",
+      "transforms.StartTime.target.type":"Timestamp",
+      "transforms.StartTime.field":"start_time",
+
+
+      "transforms.EndTime.type":"org.apache.kafka.connect.transforms.TimestampConverter$Value",
+      "transforms.EndTime.spec":"end_time:LONG",
+      "transforms.EndTime.target.type":"Timestamp",
+      "transforms.EndTime.field":"end_time",
+
+      "insert.mode":"upsert",
+      "pk.mode":"record_value",
+      "pk.fields":"id"
+  }
+}

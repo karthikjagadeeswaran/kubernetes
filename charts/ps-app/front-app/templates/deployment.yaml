@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "frontend-app.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "frontend-app.name" . }}
+  replicas: {{ .Values.replicaCount }} # tells StatefulSet to run 2 pods matching the template
+  serviceName: {{ template "frontend-app.name" . }}-headless
+  template:
+    metadata:
+      labels:
+        app: {{ include "frontend-app.name" . }}
+    spec:
+      nodeSelector:
+        disktype: k8smaster
+      containers:
+      - name: front-end
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        stdin: true
+        tty: true
+        ports:
+        - containerPort: 4000 # container port
+        env:
+          - name: PORT
+            value: "{{ .Values.env.port }}"
+          - name: REACT_APP_API_END_POINT
+            value: "{{ .Values.env.apiEndPoint }}"
+          - name: REACT_APP_CUBE_END_POINT
+            value: "{{ .Values.env.cubejsEndPoint }}"
+          - name: REACT_APP_FLOWABLE_API_URL
+            value: "{{ .Values.env.flowableEndPoint }}"
+          - name: INSIGHT_END_POINT
+            value: "{{ .Values.env.insightEndPoint }}"
+          - name: REACT_APP_ETCD_URL
+            value: "{{ .Values.env.ectdUrl }}"
+          - name: SSL_CRT_FILE
+            value: "{{ .Values.env.sslCertFile }}"
+          - name: SSL_KEY_FILE
+            value: "{{ .Values.env.sslKeyFile }}"
+          - name: PUBLIC_URL
+            value: "{{ .Values.env.publicUrl }}"
+          - name: WDS_SOCKET_PORT
+            value: "{{ .Values.env.wdsPort }}"

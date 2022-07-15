@@ -1,0 +1,29 @@
+---
+{{- if .Values.persistence.enabled }}
+{{- if .Values.persistence.nifiSingleDisk }}
+{{- if .Values.persistence.nifiSingleDisk.enabled }}
+{{- if .Values.persistence.nifiSingleDisk.dynamic }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ template "helm-nifi-registry.pvcName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "helm-nifi-registry.fullname" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  storageClassName: {{ .Values.persistence.nifiSingleDisk.dynamic.storageClass | quote }}
+
+  accessModes:
+    - {{ .Values.persistence.nifiSingleDisk.dynamic.accessModes | default "ReadWriteMany" }}
+
+  resources:
+    requests:
+      storage: {{ .Values.persistence.nifiSingleDisk.storageSize }}
+
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

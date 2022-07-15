@@ -1,0 +1,24 @@
+{{- if .Values.jobmanager.persistent.fs.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ printf "%s-fs-data" (include "flink.fullname" . | trunc 58) }}
+  labels:
+    app: {{ include "flink.name" . }}
+    chart: {{ include "flink.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - {{ .Values.jobmanager.persistent.fs.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.jobmanager.persistent.fs.size | quote }}
+  {{- if .Values.jobmanager.persistent.storageClass }}
+  {{- if (eq "-" .Values.jobmanager.persistent.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: "{{ .Values.jobmanager.persistent.storageClass }}"
+  {{- end }}
+  {{- end }}
+{{- end }}

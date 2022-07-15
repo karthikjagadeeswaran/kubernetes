@@ -1,0 +1,31 @@
+{
+  "name": "nube-postgres-sink-aggregate-data-value-events",
+   "config": {
+	  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+	  "tasks.max": "1",
+	  "topics": "nube-aggregate-data-value-events",
+	  "table.name.format": "device.aggregate_data_values",
+	  "connection.url": "jdbc:postgresql://haproxy.haproxy.default.svc.cluster.local:7779/test?user=postgres&password=postgres",
+	  "auto.create": "true",
+	  "max.retries": "600",
+	  "retry.backoff.ms": "30000",
+	  "connection.attempts": "1000",
+	  "connection.backoff.ms": "30000",
+	  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+	  "key.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+	  "value.converter": "io.confluent.connect.avro.AvroConverter",
+	  "value.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+	  "transforms": "CastTime,agg_ts",
+	  "transforms.CastTime.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+	  "transforms.CastTime.spec": "timestamp:LONG",
+	  "transforms.CastTime.target.type": "Timestamp",
+	  "transforms.CastTime.field": "timestamp",
+	  "transforms.agg_ts.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+	  "transforms.agg_ts.spec": "regenration_date:LONG",
+	  "transforms.agg_ts.target.type": "Timestamp",
+	  "transforms.agg_ts.field": "agg_ts",
+	  "insert.mode": "upsert",
+	  "pk.mode": "record_value",
+	  "pk.fields": "asset_id, name,agg_ts,window_unit,window_value,type"
+  }
+}

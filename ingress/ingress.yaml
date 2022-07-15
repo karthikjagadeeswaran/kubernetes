@@ -1,0 +1,89 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: plantsense-host-ingress
+spec:
+  ingressClassName: nginx
+  defaultBackend:
+    service:
+      name: default-http-backend
+      port: 
+        number: 80
+  rules:
+  # - host: dfk2.plantsense.ai
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/auth"
+  #       backend:
+  #         service:
+  #           name: keycloak-http
+  #           port:
+  #             name: http
+  # - host: dfk2.plantsense.ai
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/"
+  #       backend:
+  #         service:
+  #           name: ps-app-dfk-service
+  #           port:
+  #             number: 9999
+  - host: wims2.plantsense.ai
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/auth"
+        backend:
+          service:
+            name: keycloak-http
+            port:
+              name: http
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: ps-app-wims-service
+            port:
+              number: 9999
+  # - host: wims2.plantsense.ai
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/"
+  #       backend:
+  #         service:
+  #           name: ps-app-wims-service
+  #           port:
+  #             number: 9999
+  # - host: nube2.plantsense.ai
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/auth"
+  #       backend:
+  #         service:
+  #           name: keycloak-http
+  #           port:
+  #             name: http
+  # - host: nube2.plantsense.ai
+  #   http:
+  #     paths:
+  #     - pathType: Prefix
+  #       path: "/"
+  #       backend:
+  #         service:
+  #           name: ps-app-nube-service
+  #           port:
+  #             number: 9999
+  tls: 
+    # - hosts: 
+    #     - dfk2.plantsense.ai
+    #   secretName: keycloak-tls
+    - hosts: 
+        - wims2.plantsense.ai
+      secretName: keycloak-tls
+    # - hosts: 
+    #     - nube2.plantsense.ai
+    #   secretName: keycloak-tls

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: services
+description: A Helm chart for Plantsense-app-Services
+type: application
+version: 0.1.0
+appVersion: "1.16.0"

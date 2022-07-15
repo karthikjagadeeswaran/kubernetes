@@ -1,0 +1,24 @@
+{{- if .Values.persistent.enabled }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ printf "%s-grafana-plugins" (include "grafana.fullname" . | trunc 58) }}
+  labels:
+    app: {{ include "grafana.name" . }}
+    chart: {{ include "grafana.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  accessModes:
+    - {{ .Values.persistent.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.persistent.size | quote }}
+  {{- if .Values.persistent.storageClass }}
+  {{- if (eq "-" .Values.persistent.storageClass) }}
+  storageClassName: ""
+  {{- else }}
+  storageClassName: "{{ .Values.persistent.storageClass }}"
+  {{- end }}
+  {{- end }}
+{{- end }}

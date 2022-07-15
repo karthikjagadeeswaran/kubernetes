@@ -1,0 +1,44 @@
+replicaCount: 1
+
+image:
+  repository: plantsense123/proxy
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  nodePort: 30305
+
+env:
+  port: 9999
+  keyclockRealm: wims 
+  keyclockServer: https://wims2.plantsense.ai/auth/
+  keyclockSslReq: external
+  keyclockResource: node-service3
+  keyclockSecret: ea3054b9-a522-4c47-8f2d-b8474f1cb8eb
+
+  apiPath: http://services-wims-0.services-wims-headless.default.svc.cluster.local:7777
+  insightPath: http://grafana-wims-0.grafana-wims-headless.default.svc.cluster.local:3000
+  bivizPath: http://biviz-redash:80
+  flinkPath: http://flink-ha-jobmanager-rest:8081
+  kafkaConnectPath: http://kafka-connect-cp-kafka-connect:8083
+  kafkaSchemaPath: http://kafka-schema-registry-cp-schema-registry:8081
+  kafkaTopicPath: http://kafka-rest-cp-kafka-rest:8082
+  nifiPath: http://nifi:8080
+  flowablePath: http://flowable-rest:8080/flowable-rest
+  etcdPath: http://etcd-cluster-ns:2379
+
+  portalProduction: true
+  portalProductionPath: /frontend-app/build
+  portalPath: http://frontend-app-wims-0.frontend-app-nube-headless.default.svc.cluster.local:4000
+  sessionSecret: GhR@sYl012$PF7d
+  ssl: true
+  hostUrl: https://wims2.plantsense.ai
+  solution: wims
+
+frontendenv:
+  prodUrl: https://wims2.plantsense.ai

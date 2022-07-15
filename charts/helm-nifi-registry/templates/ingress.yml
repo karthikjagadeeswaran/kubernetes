@@ -1,0 +1,52 @@
+{{- if .Values.ingress.enabled -}}
+{{- $serviceName := include "helm-nifi-registry.serviceName" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+# https://kubernetes.io/docs/concepts/services-networking/ingress/
+# https://docs.giantswarm.io/guides/advanced-ingress-configuration/
+# https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/
+metadata:
+  name: "{{ template "helm-nifi-registry.fullname" . }}-in"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    app: {{ include "helm-nifi-registry.fullname" . |quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
+  annotations:
+    {{- range $key, $value := .Values.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- if .Values.ingress.auth }}
+    {{-   if .Values.ingress.auth.enabled }}
+    {{-     if eq .Values.ingress.auth.mode "basic" }}
+      # type of authentication
+      nginx.ingress.kubernetes.io/auth-type: "basic"
+      # name of the secret that contains the user/password definitions
+      nginx.ingress.kubernetes.io/auth-secret: {{ .Values.ingress.auth.basic_secret |default (printf "%s--%s" .Release.Name "secrets-auth") |quote }}
+      # message to display with an appropriate context why the authentication is required
+      nginx.ingress.kubernetes.io/auth-realm: {{ printf "%s: %s" "Authentication Required" (include "nifireg.name" .) |quote }}
+   {{-      end }}
+   {{-   end }}
+   {{- end }}
+      nginx.ingress.kubernetes.io/custom-request-headers: X-ProxyScheme:https||X-ProxyHost:{{ .Values.ingress.host }}||X-ProxyPort:443||X-Forwarded-User:$remote_user
+
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: {{ $serviceName }}
+            servicePort: {{ .Values.service.port }}
+  {{- if .Values.ingress.tls }}
+  tls:
+{{ toYaml .Values.ingress.tls | indent 4 }}
+  {{- else }}
+  tls:
+    - secretName: {{ .Values.ingress.tlsSecretName |default (print "tls-le--" $serviceName) }}
+      hosts:
+      - {{ .Values.ingress.host }}
+  {{- end -}}
+{{- end -}}

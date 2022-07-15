@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: plantsense123/services
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+env:
+  host: 0.0.0.0
+  port: 7777
+
+  pgHost: pgbouncer-pgbouncer
+  pgPort: 5432
+  pgDB: registry_db
+  pgUser: postgres
+  pgPasswd: postgres
+
+  keyclockRealm: wims
+  keyclockServer: https://wims2.plantsense.ai/auth
+  keyclockServer2: https://wims2.plantsense.ai/auth
+  keyclockSslReq: external
+  keyclockResource: node-service3
+
+  ssl: false
+
+  realmUser: admin
+  realmPasswd: admin
+  realmGrantType: password
+  realmCid: admin-cli
+  realmName: wims

@@ -1,0 +1,52 @@
+root@k8smaster:~/kafka-setup# cat postgres-sink-data-value-events.json 
+{
+  "name": "postgres-sink-data-value-events",
+  "config": {
+  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+  "tasks.max": "1",
+  "topics": "data-value-events",
+  "connection.url": "jdbc:postgresql:/10.233.64.57:5432/test_db?user=postgres&password=postgres",
+  "auto.create": "true",
+  "connection.attempts": "1000",
+  "connection.backoff.ms": "30000",
+  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+  "key.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+  "value.converter": "io.confluent.connect.avro.AvroConverter",
+  "value.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+  "table.name.format": "device.data_values",
+  "transforms": "CastTime",
+  "transforms.CastTime.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+  "transforms.CastTime.spec": "timestamp:LONG",
+  "transforms.CastTime.target.type": "Timestamp",
+  "transforms.CastTime.field": "timestamp",
+  "errors.tolerance": "all"
+}
+}
+root@k8smaster:~/kafka-setup# cat postgres-sink-live-data-value-events.json 
+{
+  "name": "postgres-sink-live-data-value-events",
+    "config": {
+  "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+  "tasks.max": "1",
+  "topics": "data-value-events",
+  "connection.url": "jdbc:postgresql://10.233.64.57:5432/test_db?user=postgres&password=postgres",
+  "auto.create": "true",
+  "connection.attempts": "1000",
+  "connection.backoff.ms": "30000",
+  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+  "key.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+  "value.converter": "io.confluent.connect.avro.AvroConverter",
+  "value.converter.schema.registry.url": "http://kafka-schema-registry-cp-schema-registry-headless:8081",
+  "table.name.format": "device.live_data_values",
+  "transforms": "CastTime",
+  "transforms.CastTime.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+  "transforms.CastTime.spec": "timestamp:LONG",
+  "transforms.CastTime.target.type": "Timestamp",
+  "transforms.CastTime.field": "timestamp",
+  "insert.mode": "upsert",
+  "pk.mode": "record_value",
+  "pk.fields": "name,asset_id",
+  "errors.tolerance": "all"
+}
+} 
+KuTeNoSe21

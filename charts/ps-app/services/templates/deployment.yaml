@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "services.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "services.fullname" . }}
+  replicas: {{ .Values.replicaCount }} # tells StatefulSet to run 2 pods matching the template
+  serviceName: {{ template "services.fullname" . }}-headless
+  template:
+    metadata:
+      labels:
+        app: {{ include "services.fullname" . }}
+    spec:
+      containers:
+      - name: services
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 7777 # container port
+        env:
+          - name: HOST
+            value: "{{ .Values.env.host }}"
+          - name: PORT
+            value: "{{ .Values.env.port }}"
+          - name: POSTGRESQL_HOSTNAME
+            value: "{{ .Values.env.pgHost }}"
+          - name: POSTGRESQL_PORT
+            value: "{{ .Values.env.pgPort }}"
+          - name: POSTGRESQL_DATABASE
+            value: "{{ .Values.env.pgDB }}"
+          - name: POSTGRESQL_USER
+            value: "{{ .Values.env.pgUser }}"
+          - name: POSTGRESQL_PASSWORD
+            value: "{{ .Values.env.pgPasswd }}"
+          - name: KEYCLOAK_REALM
+            value: "{{ .Values.env.keyclockRealm }}"
+          - name: KEYCLOAK_AUTH_SERVER_URL
+            value: "{{ .Values.env.keyclockServer }}"
+          - name: KEYCLOAK_AUTH_SERVER_URL2
+            value: "{{ .Values.env.keyclockServer2 }}"
+          - name: KEYCLOAK_SSL_REQUIRED
+            value: "{{ .Values.env.keyclockSslReq }}"
+          - name: KEYCLOAK_RESOURCE
+            value: "{{ .Values.env.keyclockResource }}"
+          - name: SSL
+            value: "{{ .Values.env.ssl }}"
+          - name: REALM_USERNAME
+            value: "{{ .Values.env.realmUser }}"
+          - name: REALM_PASSWORD
+            value: "{{ .Values.env.realmPasswd }}"
+          - name: REALM_GRANTTYPE
+            value: "{{ .Values.env.realmGrantType }}"
+          - name: REALM_CLIENTID
+            value: "{{ .Values.env.realmCid }}"
+          - name: REALM_NAME
+            value: "{{ .Values.env.realmName }}"

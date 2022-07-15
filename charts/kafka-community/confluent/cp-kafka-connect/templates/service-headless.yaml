@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "cp-kafka-connect.fullname" . }}-headless
+  labels:
+    app: {{ template "cp-kafka-connect.name" . }}
+    chart: {{ template "cp-kafka-connect.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  clusterIP: None
+  ports:
+    - name: kafka-connect
+      port: {{ .Values.servicePort }}
+  selector:
+    app: {{ template "cp-kafka-connect.name" . }}
+    release: {{ .Release.Name }}
